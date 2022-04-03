@@ -2,10 +2,21 @@
 Api for creating System.Security.Claims instances like ClaimsPrincipal or ClaimsIdentity.
 Can be used for UnitTesting - e.g: together with ASP NET Core
 
+## Supported Types
+- ClaimsIdentity
+- ClaimsPrincipal
+
 ## Usage
-Build a principal with name and role for unit testing purposes:
+Build an identity or principal for unit testing purposes:
 ```csharp
-var principal = IdentityBuilders.BuildPrincipal()
+ClaimsIdentity identity = IdentityBuilders.BuildIdentity()
+    .WithName("UserName")
+    .WithClaim("ClaimType", "ClaimValue")
+    .Create();
+```
+
+```csharp
+ClaimsPrincipal principal = IdentityBuilders.BuildPrincipal()
     .WithName("UserName")
     .WithRole("RoleName")
     .Create();
