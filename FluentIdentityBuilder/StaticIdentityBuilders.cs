@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FluentIdentityBuilder
 {
-    public static class IdentityBuilders
+    public static class StaticIdentityBuilders
     {
         public static IIdentityBuilder<ClaimsIdentity> BuildIdentity()
         {

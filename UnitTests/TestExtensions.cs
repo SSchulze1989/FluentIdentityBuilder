@@ -19,7 +19,7 @@ namespace UnitTests
         [Fact]
         public void TestWithClaims()
         {
-            var identity = IdentityBuilders.BuildIdentity()
+            var identity = StaticIdentityBuilders.BuildIdentity()
                 .WithClaims(new Claim[] { claim1, claim2 })
                 .Create();
             Assert.True(identity.HasClaim(claim1.Type, claim1.Value));
@@ -29,7 +29,7 @@ namespace UnitTests
         [Fact]
         public void TestWithRoles()
         {
-            var principal = IdentityBuilders.BuildPrincipal()
+            var principal = StaticIdentityBuilders.BuildPrincipal()
                 .WithRoles(new string[] { role1, role2 })
                 .Create();
             Assert.True(principal.IsInRole(role1));

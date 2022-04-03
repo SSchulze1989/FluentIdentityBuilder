@@ -1,5 +1,6 @@
 using FluentIdentityBuilder;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithName()
         {
-            var identity = IdentityBuilders.BuildIdentity()
+            var identity = StaticIdentityBuilders.BuildIdentity()
                 .WithName(defaultName)
                 .Create();
             Assert.Equal(identity.Name, defaultName);
@@ -28,7 +29,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithIdentifier()
         {
-            var identity = IdentityBuilders.BuildIdentity()
+            var identity = StaticIdentityBuilders.BuildIdentity()
                 .WithIdentifier(defaultId)
                 .Create();
             Assert.True(identity.HasClaim(ClaimTypes.NameIdentifier, defaultId));
@@ -37,7 +38,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithClaims()
         {
-            var identity = IdentityBuilders.BuildIdentity()
+            var identity = StaticIdentityBuilders.BuildIdentity()
                 .WithClaim(defaultClaim1.Type, defaultClaim1.Value)
                 .WithClaim(defaultClaim2.Type, defaultClaim2.Value)
                 .Create();
@@ -48,7 +49,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithRoles()
         {
-            var identity = IdentityBuilders.BuildIdentity()
+            var identity = StaticIdentityBuilders.BuildIdentity()
                 .WithRole(defaultRole1)
                 .WithRole(defaultRole2)
                 .Create();
@@ -59,7 +60,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithAuthentication()
         {
-            var identity = IdentityBuilders.BuildIdentity()
+            var identity = StaticIdentityBuilders.BuildIdentity()
                 .WithAuthentication(defaultAuthenticationType, defaultAuthenticationValue)
                 .Create();
             Assert.True(identity.IsAuthenticated);
@@ -69,10 +70,54 @@ namespace UnitTests
         [Fact]
         public void OverrideName()
         {
-            Assert.Throws<InvalidOperationException>(() => IdentityBuilders.BuildIdentity()
+            var identity = StaticIdentityBuilders.BuildIdentity()
                 .WithName("FalseName")
                 .WithName(defaultName)
-                .Create());
+                .Create();
+            Assert.Equal(defaultName, identity.Name);
+        }
+
+        [Fact]
+        public void OverrideIdentifier()
+        {
+            var identity = StaticIdentityBuilders.BuildIdentity()
+                .WithIdentifier("FalseId")
+                .WithIdentifier(defaultId)
+                .Create();
+            var identifier = identity.Claims.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            Assert.Equal(defaultId, identifier.Value);
+        }
+
+        [Fact]
+        public void BuildWithDefaultName()
+        {
+            var builder = new ClaimsIdentityBuilder();
+            builder.Defaults.Name = defaultName;
+            var identity = builder.Create();
+            Assert.Equal(defaultName, identity.Name);
+        }
+
+        [Fact]
+        public void BuildWithDefaultIdentfier()
+        {
+            var builder = new ClaimsIdentityBuilder();
+            builder.Defaults.Identifier = defaultId;
+            var identity = builder.Create();
+            Assert.True(identity.HasClaim(ClaimTypes.NameIdentifier, defaultId));
+        }
+
+        [Fact]
+        public void BuildWithDefaultClaims()
+        {
+            var builder = new ClaimsIdentityBuilder();
+            builder.Defaults.Claims = new Claim[]
+            {
+                defaultClaim1,
+                defaultClaim2
+            };
+            var identity = builder.Create();
+            Assert.True(identity.HasClaim(defaultClaim1.Type, defaultClaim1.Value));
+            Assert.True(identity.HasClaim(defaultClaim2.Type, defaultClaim2.Value));
         }
     }
 }

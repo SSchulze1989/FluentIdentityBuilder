@@ -1,5 +1,6 @@
 using FluentIdentityBuilder;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithName()
         {
-            var principal = IdentityBuilders.BuildPrincipal()
+            var principal = StaticIdentityBuilders.BuildPrincipal()
                 .WithName(defaultName)
                 .Create();
             Assert.Equal(principal.Identity.Name, defaultName);
@@ -28,7 +29,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithIdentifier()
         {
-            var principal = IdentityBuilders.BuildPrincipal()
+            var principal = StaticIdentityBuilders.BuildPrincipal()
                 .WithIdentifier(defaultId)
                 .Create();
             Assert.True(principal.HasClaim(ClaimTypes.NameIdentifier, defaultId));
@@ -37,7 +38,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithClaims()
         {
-            var principal = IdentityBuilders.BuildPrincipal()
+            var principal = StaticIdentityBuilders.BuildPrincipal()
                 .WithClaim(defaultClaim1.Type, defaultClaim1.Value)
                 .WithClaim(defaultClaim2.Type, defaultClaim2.Value)
                 .Create();
@@ -48,7 +49,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithRoles()
         {
-            var principal = IdentityBuilders.BuildPrincipal()
+            var principal = StaticIdentityBuilders.BuildPrincipal()
                 .WithRole(defaultRole1)
                 .WithRole(defaultRole2)
                 .Create();
@@ -59,7 +60,7 @@ namespace UnitTests
         [Fact]
         public void BuildWithAuthentication()
         {
-            var principal = IdentityBuilders.BuildPrincipal()
+            var principal = StaticIdentityBuilders.BuildPrincipal()
                 .WithAuthentication(defaultAuthenticationType, defaultAuthenticationValue)
                 .Create();
             Assert.True(principal.Identity.IsAuthenticated);
@@ -69,10 +70,54 @@ namespace UnitTests
         [Fact]
         public void OverrideName()
         {
-            Assert.Throws<InvalidOperationException>(() => IdentityBuilders.BuildPrincipal()
+            var principal = StaticIdentityBuilders.BuildPrincipal()
                 .WithName("FalseName")
                 .WithName(defaultName)
-                .Create());
+                .Create();
+            Assert.Equal(defaultName, principal.Identity.Name);
+        }
+
+        [Fact]
+        public void OverrideIdentifier()
+        {
+            var principal = StaticIdentityBuilders.BuildPrincipal()
+                .WithIdentifier("FalseId")
+                .WithIdentifier(defaultId)
+                .Create();
+            var identifier = principal.Claims.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            Assert.Equal(defaultId, identifier.Value);
+        }
+
+        [Fact]
+        public void BuildWithDefaultName()
+        {
+            var builder = new ClaimsPrincipalBuilder();
+            builder.Defaults.Name = defaultName;
+            var principal = builder.Create();
+            Assert.Equal(defaultName, principal.Identity.Name);
+        }
+
+        [Fact]
+        public void BuildWithDefaultIdentfier()
+        {
+            var builder = new ClaimsPrincipalBuilder();
+            builder.Defaults.Identifier = defaultId;
+            var principal = builder.Create();
+            Assert.True(principal.HasClaim(ClaimTypes.NameIdentifier, defaultId));
+        }
+
+        [Fact]
+        public void BuildWithDefaultClaims()
+        {
+            var builder = new ClaimsPrincipalBuilder();
+            builder.Defaults.Claims = new Claim[]
+            {
+                defaultClaim1,
+                defaultClaim2
+            };
+            var principal = builder.Create();
+            Assert.True(principal.HasClaim(defaultClaim1.Type, defaultClaim1.Value));
+            Assert.True(principal.HasClaim(defaultClaim2.Type, defaultClaim2.Value));
         }
     }
 }

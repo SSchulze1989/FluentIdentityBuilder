@@ -46,16 +46,14 @@ namespace FluentIdentityBuilder
 
         IIdentityBuilder<T> IIdentityBuilder<T>.WithIdentifier(string identifier)
         {
+            claims.RemoveAll(x => x.Type == ClaimTypes.NameIdentifier);
             AddOrUpdateClaim(ClaimTypes.NameIdentifier, identifier);
             return this;
         }
 
         IIdentityBuilder<T> IIdentityBuilder<T>.WithName(string name)
         {
-            if (claims.Any(x => x.Type == ClaimTypes.Name))
-            {
-                throw new InvalidOperationException("Identity name can only be set once");
-            }
+            claims.RemoveAll(x => x.Type == ClaimTypes.Name);
             AddOrUpdateClaim(ClaimTypes.Name, name);
             return this;
         }
