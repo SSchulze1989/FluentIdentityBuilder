@@ -1,7 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net5.0</TargetFrameworks>
+		<PackageId>FluentIdentityBuilder</PackageId>
+		<Version>0.0.1</Version>
+		<Authors>Simon Schulze</Authors>
+		<Company>Simon Schulze</Company>
+		<PackageDescription>Fluent Api for creating System.Security.Claims instances like ClaimsPrincipal or ClaimsIdentity. Can be used for UnitTesting - e.g: together with ASP NET Core</PackageDescription>
+		<RepositoryUrl>https://github.com/SSchulze1989/FluentIdentityBuilder</RepositoryUrl>
+	</PropertyGroup>
 
 </Project>
