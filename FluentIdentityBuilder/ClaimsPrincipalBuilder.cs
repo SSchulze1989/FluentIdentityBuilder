@@ -1,42 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 
-namespace FluentIdentityBuilder
+namespace FluentIdentityBuilder;
+
+public class ClaimsPrincipalBuilder
 {
-    public class ClaimsPrincipalBuilder
+    public IdentityDefaults Defaults { get; }
+
+    public ClaimsPrincipalBuilder() 
     {
-        public IdentityDefaults Defaults { get; }
+        Defaults = new IdentityDefaults();
+    }
+    public ClaimsPrincipalBuilder(IdentityDefaults defaults)
+    {
+        Defaults = defaults;
+    }
 
-        public ClaimsPrincipalBuilder() 
+    public IIdentityBuilder<ClaimsPrincipal> StartBuild()
+    {
+        IIdentityBuilder<ClaimsPrincipal> builder = new FluentPrincipalBuilder(Defaults.Claims);
+        if (string.IsNullOrEmpty(Defaults.Identifier) == false)
         {
-            Defaults = new IdentityDefaults();
+            builder.WithIdentifier(Defaults.Identifier);
         }
-        public ClaimsPrincipalBuilder(IdentityDefaults defaults)
+        if (string.IsNullOrEmpty(Defaults.Name) == false)
         {
-            Defaults = defaults;
+            builder.WithName(Defaults.Name);
         }
+        return builder;
+    }
 
-        public IIdentityBuilder<ClaimsPrincipal> StartBuild()
-        {
-            IIdentityBuilder<ClaimsPrincipal> builder = new FluentPrincipalBuilder(Defaults.Claims);
-            if (string.IsNullOrEmpty(Defaults.Identifier) == false)
-            {
-                builder.WithIdentifier(Defaults.Identifier);
-            }
-            if (string.IsNullOrEmpty(Defaults.Name) == false)
-            {
-                builder.WithName(Defaults.Name);
-            }
-            return builder;
-        }
-
-        public ClaimsPrincipal Create()
-        {
-            return StartBuild().Create();
-        }
+    public ClaimsPrincipal Create()
+    {
+        return StartBuild().Create();
     }
 }

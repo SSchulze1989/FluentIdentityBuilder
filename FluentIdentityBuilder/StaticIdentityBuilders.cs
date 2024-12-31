@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 
-namespace FluentIdentityBuilder
+namespace FluentIdentityBuilder;
+
+public static class StaticIdentityBuilders
 {
-    public static class StaticIdentityBuilders
+    public static IIdentityBuilder<ClaimsIdentity> BuildIdentity()
     {
-        public static IIdentityBuilder<ClaimsIdentity> BuildIdentity()
-        {
-            return new FluentIdentityBuilder();
-        }
+        return new FluentIdentityBuilder();
+    }
 
-        public static IIdentityBuilder<ClaimsPrincipal> BuildPrincipal()
-        {
-            return new FluentPrincipalBuilder();
-        }
+    public static IIdentityBuilder<ClaimsPrincipal> BuildPrincipal()
+    {
+        return new FluentPrincipalBuilder();
     }
 }

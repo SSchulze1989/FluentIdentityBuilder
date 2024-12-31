@@ -1,0 +1,33 @@
+name: .NET
+
+on:
+  push:
+    tags: 
+      - "*"
+
+jobs:
+  publish:
+
+    env:
+      BUILD_CONFIG: Release
+      NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
+      
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 8.0.x
+        source-url: https://api.nuget.org/v3/index.json
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore -c $BUILD_CONFIG
+    - name: Test
+      run: dotnet test --no-build --verbosity normal -c $BUILD_CONFIG
+    - name: Pack
+      run: dotnet pack -c $BUILD_CONFIG --no-restore --no-build
+    - name: Publish
+      run: dotnet nuget push **\*.nupkg --skip-duplicate -k ${NUGET_AUTH_TOKEN}
